@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace BezierCasteljau
+namespace ComputerGraphicsLab5_3
 {
     public class BezierForm : Form
     {
@@ -120,14 +120,19 @@ namespace BezierCasteljau
             Graphics g = e.Graphics;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-            if (controlPoints.Count == 4)
+            if (controlPoints.Count >= 4)
             {
-                Castel(g, controlPoints, t);
-                BezierCurve(g, controlPoints);
+                //Для каждой группы по 4 точки
+                for (int i = 0; i <= controlPoints.Count - 4; i += 3)
+                {
+                    var segment = controlPoints.GetRange(i, 4);
+                    Castel(g, segment, t);
+                    BezierCurve(g, segment);
+                }
             }
             else
             {
-                g.DrawString("Добавьте ровно 4 точки (лкм). Правый клик — удалить.",
+                g.DrawString("Добавьте ≥ 4 точки (лкм). Правый клик — удалить.",
                     this.Font, Brushes.Gray, 20, 20);
             }
 
@@ -137,7 +142,6 @@ namespace BezierCasteljau
                 Brush b = (i == selectedIndex) ? Brushes.OrangeRed : Brushes.Green;
                 g.FillEllipse(b, controlPoints[i].X - rad, controlPoints[i].Y - rad, rad * 2, rad * 2);
                 g.DrawEllipse(Pens.Black, controlPoints[i].X - rad, controlPoints[i].Y - rad, rad * 2, rad * 2);
-
                 g.DrawString($"P{i}", this.Font, Brushes.Black, controlPoints[i].X + 8, controlPoints[i].Y + 8);
             }
         }
